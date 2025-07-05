@@ -16,6 +16,11 @@ namespace Kiosco.Entidades
         {
             return PrecioBase;
         }
+        
+        public string InformarDatos()
+        {
+            return $"Código: {codigo}, Nombre: {Nombre}, Precio Base: {PrecioBase:C}, Stock: {Stock}, Fecha de Ingreso: {fechaDeingreso.ToShortDateString()}, Fecha de Vencimiento: {fechaDeVencimiento.ToShortDateString()}";
+        }
 
         public abstract string InformarDatosEspecifico();
 
