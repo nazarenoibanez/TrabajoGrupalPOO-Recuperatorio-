@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Kiosco.Datos.RepoWindows
 {
-    internal class RepositorioProductosOperadores : IRepositorioProductos
+    public class RepositorioProductosOperadores : IRepositorioProductos
     {
         private List<Producto> productos;
 
