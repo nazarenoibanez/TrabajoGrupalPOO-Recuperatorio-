@@ -19,7 +19,6 @@ namespace Kiosco.Servicio.ServicioConsola
             _repositorioProductos = repositorioProductos;
         }
 
-
         public ValidationResultDto Eliminar(string codigo)
         {
             ValidationResultDto resultadoDto = new ValidationResultDto() { EsValido = true };

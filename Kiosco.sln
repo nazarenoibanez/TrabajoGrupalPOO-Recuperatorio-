@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36121.58 d17.14
+VisualStudioVersion = 17.14.36121.58
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kiosco.Consola", "Kiosco\Kiosco.Consola.csproj", "{D8EFC3E4-7BC4-4F62-A875-F955F207B1CD}"
 EndProject
@@ -12,6 +12,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kiosco.Servicio", "Kiosco.Servicio\Kiosco.Servicio.csproj", "{67DEA25D-5421-4920-9B73-67CD84E77E23}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kiosco.WindowsForm", "Kiosco.WindowsForm\Kiosco.WindowsForm.csproj", "{7164E9A5-3E42-4608-AC51-ACD1FA001380}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kiosco.Ioc", "Kiosco.Ioc\Kiosco.Ioc.csproj", "{9C1AAA70-7F5F-4072-89F7-D74EE4EE15AD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{7164E9A5-3E42-4608-AC51-ACD1FA001380}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7164E9A5-3E42-4608-AC51-ACD1FA001380}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7164E9A5-3E42-4608-AC51-ACD1FA001380}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C1AAA70-7F5F-4072-89F7-D74EE4EE15AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C1AAA70-7F5F-4072-89F7-D74EE4EE15AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C1AAA70-7F5F-4072-89F7-D74EE4EE15AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C1AAA70-7F5F-4072-89F7-D74EE4EE15AD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
