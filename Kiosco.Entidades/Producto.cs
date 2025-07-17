@@ -43,9 +43,9 @@ namespace Kiosco.Entidades
                 yield return new ValidationResult("El stock no puede ser negativo");
             if (fechaDeingreso == default)
                 yield return new ValidationResult("Fecha de ingreso es obligatoria");
-            if (fechaDeVencimiento < DateTime.Now.Date || fechaDeVencimiento > DateTime.Now.AddDays(180).Date)
+            if (fechaDeVencimiento > DateTime.Now.AddDays(180).Date)
             {
-                throw new ArgumentOutOfRangeException(nameof(fechaDeVencimiento), "La fecha de vencimiento debe estar entre hoy y 180 días a partir de hoy.");
+                throw new ArgumentOutOfRangeException(nameof(fechaDeVencimiento), "La fecha de vencimiento tiene que ser 180");
             }
         }
     }
