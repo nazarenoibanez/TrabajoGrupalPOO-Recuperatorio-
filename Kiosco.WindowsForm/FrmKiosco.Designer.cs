@@ -158,6 +158,7 @@
             TsbBorrar.Size = new Size(43, 22);
             TsbBorrar.Text = "Borrar";
             TsbBorrar.TextImageRelation = TextImageRelation.ImageAboveText;
+            TsbBorrar.Click += TsbBorrar_Click;
             // 
             // TsbEditar
             // 
@@ -167,6 +168,7 @@
             TsbEditar.Size = new Size(41, 22);
             TsbEditar.Text = "Editar";
             TsbEditar.TextImageRelation = TextImageRelation.ImageAboveText;
+            TsbEditar.Click += TsbEditar_Click;
             // 
             // toolStripSeparator1
             // 

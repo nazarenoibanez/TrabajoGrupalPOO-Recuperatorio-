@@ -104,5 +104,75 @@ namespace Kiosco.WindowsForm
                 }
             }
         }
+
+        private void TsbEditar_Click(object sender, EventArgs e)
+        {
+            if (dgvDatos.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Debe seleccionar un producto para editar.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            var fila = dgvDatos.SelectedRows[0];
+            Producto productoSeleccionado = (Producto)fila.Tag!;
+
+            using (FrmKioscoAE frm = new FrmKioscoAE())
+            {
+                frm.SetProducto(productoSeleccionado);
+                DialogResult dr = frm.ShowDialog(this);
+                if (dr == DialogResult.Cancel)
+                {
+                    LblStatus.Text = "Edición cancelada.";
+                    return;
+                }
+
+                Producto? productoEditado = frm.GetProducto();
+                if (productoEditado == null) return;
+
+                try
+                {
+                    _repositorio.Editar(productoEditado);
+                    GridHelper.SetearFila(fila, productoEditado);
+                    LblStatus.Text = "Producto editado correctamente.";
+                }
+                catch (ValidationException ex)
+                {
+                    MessageBox.Show(ex.Message, "Error de validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    LblStatus.Text = "Error al editar el producto.";
+                }
+            }
+        }
+
+        private void TsbBorrar_Click(object sender, EventArgs e)
+        {
+            if (dgvDatos.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Debe seleccionar un producto para eliminar.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            var fila = dgvDatos.SelectedRows[0];
+            Producto productoSeleccionado = (Producto)fila.Tag!;
+
+            DialogResult dr = MessageBox.Show($"¿Está seguro que desea eliminar '{productoSeleccionado.Nombre}'?", "Confirmar eliminación", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            if (dr == DialogResult.No)
+            {
+                LblStatus.Text = "Eliminación cancelada.";
+                return;
+            }
+
+            try
+            {
+                _repositorio.Eliminar(productoSeleccionado.Id);
+                dgvDatos.Rows.Remove(fila);
+                LblStatus.Text = "Producto eliminado correctamente.";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al intentar eliminar el producto.\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                LblStatus.Text = "Error al eliminar.";
+            }
+        }
     }
 }

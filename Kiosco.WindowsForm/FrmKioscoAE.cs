@@ -1,105 +1,98 @@
 ﻿using Kiosco.Entidades;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Data;
-using System.Drawing;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Kiosco.WindowsForm
 {
     public partial class FrmKioscoAE : Form
     {
-
         private Producto? producto;
+
         public FrmKioscoAE()
         {
             InitializeComponent();
+        }
 
-        }
-        public Producto? GetProducto()
-        {
-            return producto;
-        }
+        public Producto? GetProducto() => producto;
+
         public void SetProducto(Producto? producto)
         {
             this.producto = producto;
         }
+
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
             CargarTiposProducto();
             CargarDatosProducto(producto);
+
             if (producto is not null)
             {
                 this.Text = "Editar Producto";
-
-                txtCodigo.Enabled = false; // El código no se debe cambiar en edición
-                cboTipoProducto.Enabled = false; // El tipo de producto no se cambia en edición
-
+                txtCodigo.Enabled = false;
+                cboTipoProducto.Enabled = false;
             }
             else
             {
                 this.Text = "Nuevo Producto";
                 nudStock.Value = 1;
-
             }
         }
 
-        // --- Método CargarTiposProducto modificado para usar la enumeración ---
-        public void CargarTiposProducto()
+        private void CargarTiposProducto()
         {
             cboTipoProducto.DataSource = Enum.GetValues(typeof(TipoProducto));
         }
 
         private void CargarDatosProducto(Producto? producto)
         {
-            if (producto is not null)
+            if (producto is null) return;
+
+            txtCodigo.Text = producto.codigo;
+            txtNombre.Text = producto.Nombre;
+            txtPrecioBase.Text = producto.PrecioBase.ToString();
+            nudStock.Value = producto.Stock;
+            dtpFechaVencimiento.Value = producto.FechaVto;
+
+            if (producto is Bebida b)
             {
-                txtCodigo.Text = producto.codigo;
-                txtNombre.Text = producto.Nombre;
-                txtPrecioBase.Text = producto.PrecioBase.ToString();
-                nudStock.Value = producto.Stock;
-
-                // Determinar el tipo del producto
-                TipoProducto tipoSeleccionado = TipoProducto.Bebida; // Valor por defecto
-
-                if (producto is Bebida)
-                    tipoSeleccionado = TipoProducto.Bebida;
-                else if (producto is Cigarrillo)
-                    tipoSeleccionado = TipoProducto.Cigarrillo;
-                else if (producto is Golosina)
-                    tipoSeleccionado = TipoProducto.Golosina;
-                else if (producto is Revista)
-                    tipoSeleccionado = TipoProducto.Revista;
-
-
-
-                cboTipoProducto.SelectedItem = tipoSeleccionado;
+                cboTipoProducto.SelectedItem = TipoProducto.Bebida;
+                chkTieneAlcohol.Checked = b.EsAlcoholica;
+                CargarMarcas(typeof(MarcaB));
+                cboMarca.SelectedItem = b.MarcaB;
+            }
+            else if (producto is Golosina g)
+            {
+                cboTipoProducto.SelectedItem = TipoProducto.Golosina;
+                CargarMarcas(typeof(MarcaGolosina));
+                cboMarca.SelectedItem = g.MarcaGolosina;
+            }
+            else if (producto is Revista r)
+            {
+                cboTipoProducto.SelectedItem = TipoProducto.Revista;
+                chkTienePoster.Checked = r.TienePoster;
+                CargarMarcas(typeof(MarcaRevista));
+                cboMarca.SelectedItem = r.MarcaRevista;
+            }
+            else if (producto is Cigarrillo c)
+            {
+                cboTipoProducto.SelectedItem = TipoProducto.Cigarrillo;
+                chkEsImportado.Checked = c.esImportado;
+                CargarMarcas(typeof(MarcaCigarrillo));
+                cboMarca.SelectedItem = c.MarcaCigarillo;
             }
         }
 
         private void BtnOK_Click(object sender, EventArgs e)
         {
-            string codigo = txtCodigo.Text;
-            string nombre = txtNombre.Text;
+            string codigo = txtCodigo.Text.Trim();
+            string nombre = txtNombre.Text.Trim();
             decimal precioBase;
             int stock = (int)nudStock.Value;
-            var marcaB = (MarcaB)cboMarca.SelectedItem!;
-            var marcaGolosina = (marcaGolosina)cboMarca.SelectedItem!;
-            var marcaRevista = (MarcaRevista)cboMarca.SelectedItem!;
-            var marcaCigarrillo = (MarcaCigarrillo)cboMarca.SelectedItem!;
-            var fechaVencimiento = (FechaVencimiento)cboMarca.SelectedItem!;
-
-
-
-
-
-            var tipoSeleccionado = (TipoProducto)cboTipoProducto.SelectedItem!;
+            DateTime fechaVto = dtpFechaVencimiento.Value;
 
             if (!decimal.TryParse(txtPrecioBase.Text, out precioBase))
             {
@@ -107,79 +100,97 @@ namespace Kiosco.WindowsForm
                 return;
             }
 
+            if (string.IsNullOrWhiteSpace(nombre))
+            {
+                MessageBox.Show("Debe ingresar un nombre válido.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            if (cboMarca.SelectedItem is null)
+            {
+                MessageBox.Show("Debe seleccionar una marca.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            var tipoSeleccionado = (TipoProducto)cboTipoProducto.SelectedItem!;
             switch (tipoSeleccionado)
             {
-                case TipoProducto.Golosina:
-                    producto = new Bebida()
-                    {
-                        MarcaGolosina = marcaGolosina,
-                        Nombre = nombre,
-                        PrecioBase = precioBase,
-                        Stock = stock,
-
-                    };
-                    break;
-                case TipoProducto.Revista:
-                    producto = new Bebida()
-                    {
-                        MarcaRevista = marcaRevista,
-                        Nombre = nombre,
-                        PrecioBase = precioBase,
-                        Stock = stock,
-
-                    };
-                    break;
                 case TipoProducto.Bebida:
                     producto = new Bebida()
                     {
-                        MarcaB = marcaB,
+                        codigo = codigo,
                         Nombre = nombre,
                         PrecioBase = precioBase,
                         Stock = stock,
-
+                        FechaVto = fechaVto,
+                        MarcaB = (MarcaB)cboMarca.SelectedItem!,
+                        EsAlcoholica = chkTieneAlcohol.Checked
                     };
                     break;
+
+                case TipoProducto.Golosina:
+                    producto = new Golosina()
+                    {
+                        codigo = codigo,
+                        Nombre = nombre,
+                        PrecioBase = precioBase,
+                        Stock = stock,
+                        FechaVto = fechaVto,
+                        MarcaGolosina = (MarcaGolosina)cboMarca.SelectedItem!
+                    };
+                    break;
+
+                case TipoProducto.Revista:
+                    producto = new Revista()
+                    {
+                        codigo = codigo,
+                        Nombre = nombre,
+                        PrecioBase = precioBase,
+                        Stock = stock,
+                        FechaVto = fechaVto,
+                        MarcaRevista = (MarcaRevista)cboMarca.SelectedItem!,
+                        TienePoster = chkTienePoster.Checked
+                    };
+                    break;
+
                 case TipoProducto.Cigarrillo:
                     producto = new Cigarrillo()
                     {
-                        MarcaCigarillo = marcaCigarrillo,
+                        codigo = codigo,
                         Nombre = nombre,
                         PrecioBase = precioBase,
                         Stock = stock,
+                        FechaVto = fechaVto,
+                        MarcaCigarillo = (MarcaCigarrillo)cboMarca.SelectedItem!,
                         esImportado = chkEsImportado.Checked
-
                     };
                     break;
-                default:
-                    MessageBox.Show("Debe seleccionar un tipo de producto.", "Error de Selección", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
             }
 
-            var validationContext = new ValidationContext(producto);
+            var context = new ValidationContext(producto!);
             var errores = new List<ValidationResult>();
-            if (!Validator.TryValidateObject(producto, validationContext, errores, true))
+            if (!Validator.TryValidateObject(producto!, context, errores, true))
             {
                 MostrarErrores(errores);
                 return;
             }
+
             DialogResult = DialogResult.OK;
-
-        }
-        private void BtnCancelar_Click(object sender, EventArgs e)
-        {
-            this.DialogResult = DialogResult.Cancel;
-
         }
 
         private void MostrarErrores(List<ValidationResult> errores)
         {
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine("Errores en los datos comunes:");
+            StringBuilder sb = new StringBuilder("Se encontraron los siguientes errores:\n");
             foreach (var error in errores)
             {
                 sb.AppendLine($"- {error.ErrorMessage}");
             }
-            MessageBox.Show(sb.ToString(), "Errores de Validación", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(sb.ToString(), "Errores de validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
+
+        private void BtnCancelar_Click(object sender, EventArgs e)
+        {
+            DialogResult = DialogResult.Cancel;
         }
 
         private void CboTipoProducto_SelectedIndexChanged(object sender, EventArgs e)
@@ -188,37 +199,40 @@ namespace Kiosco.WindowsForm
             {
                 switch (tipo)
                 {
-                    case TipoProducto.Cigarrillo:
-                        MostrarControles(false, false, false, false);
+                    case TipoProducto.Bebida:
+                        MostrarControles(esAlcoholica: true, esImportado: false, tienePoster: false, fechaVto: true);
+                        CargarMarcas(typeof(MarcaB));
                         break;
 
                     case TipoProducto.Golosina:
-                        MostrarControles(true, false, true, false);
+                        MostrarControles(esAlcoholica: false, esImportado: false, tienePoster: false, fechaVto: true);
+                        CargarMarcas(typeof(MarcaGolosina));
                         break;
 
                     case TipoProducto.Revista:
-                        MostrarControles(false, false, false, true);
+                        MostrarControles(esAlcoholica: false, esImportado: false, tienePoster: true, fechaVto: true);
+                        CargarMarcas(typeof(MarcaRevista));
                         break;
 
-                    case TipoProducto.Bebida:
-                        MostrarControles(false, true, false, false);
+                    case TipoProducto.Cigarrillo:
+                        MostrarControles(esAlcoholica: false, esImportado: true, tienePoster: false, fechaVto: true);
+                        CargarMarcas(typeof(MarcaCigarrillo));
                         break;
                 }
             }
         }
-        private void MostrarControles(bool fechaVencimiento, bool esAlcoholica, bool esImportado, bool tienePoster)
+
+        private void MostrarControles(bool esAlcoholica, bool esImportado, bool tienePoster, bool fechaVto)
         {
-            dtpFechaVencimiento.Visible = fechaVencimiento;
-
-            dtpFechaVencimiento.Visible = fechaVencimiento;
-
             chkTieneAlcohol.Visible = esAlcoholica;
-
             chkEsImportado.Visible = esImportado;
-
             chkTienePoster.Visible = tienePoster;
-
+            dtpFechaVencimiento.Visible = fechaVto;
         }
 
+        private void CargarMarcas(Type tipoEnum)
+        {
+            cboMarca.DataSource = Enum.GetValues(tipoEnum);
+        }
     }
 }
